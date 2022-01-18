@@ -14,6 +14,18 @@
 
 ### debounce 实现
 
+```js
+function debounce(fn, wait = 200) {
+  let timer
+  return function (...args) {
+    timer && clearTimeout(timer)
+    timer = setTimeout(() => {
+      fn.call(this, ...args)
+    }, wait)
+  }
+}
+```
+
 ### debounce 实例
 
 - 调整大小的例子
@@ -23,3 +35,42 @@
 - 基于 Ajax 请求自动完成功能
 
 当用户停止输入的时候，再发送请求。
+
+## 节流(Throttle)
+
+使用`_.throttle`的时候，只允许一个函数在 X 毫秒内执行一次。
+跟`debounce`主要的不同在于，`throttle`保证 X 毫秒内执行一次。
+
+### 节流实例
+
+- 无限滚动
+
+用户向下无限滚动页面，需要检查滚动位置距离底部多远，如果临近底部了，我们可以发送 AJAX 请求获取更多的数据插入到页面。
+在此场景下，我们心爱的`debounce`就不适用了，只有当用户停止滚动的时候它才会触发。只要用户滚动临近底部附近时，我们就想获取内容。
+
+**请查看示例四**
+
+### 节流实现
+
+```js
+function throttle(fn, wait) {
+  let timer
+  let firstInvoke = false
+
+  return function (...args) {
+    if (!firstInvoke) {
+      fn.call(this, ...args)
+    }
+
+    if (timer) {
+      return
+    }
+
+    timer = setTimeout(() => {
+      clearTimeout(timer)
+      timer = null
+      fn.call(this, ...args)
+    }, wait)
+  }
+}
+```
